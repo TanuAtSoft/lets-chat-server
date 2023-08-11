@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express()
-const PORT = 8080;
+const PORT = 5000;
 const mongoose = require("mongoose");
 app.use(express.json());
 const bodyParser = require("body-parser");
@@ -32,12 +32,19 @@ mongoose.connect(process.env.DB_URL, {
     })
   );
 
-  const authRoutes = require("./src/routes/authRoutes");
-  const chatRoutes = require("./src/routes/chatRoutes");
-  const messageRoute = require("./src/routes/messageRoute");
-  app.use("/", authRoutes);
-  app.use("/", chatRoutes);
-  app.use("/", messageRoute);
+ const AuthRoute  = require("./src/routes/AuthRoute");
+const UserRoute = require('./src/routes/UserRoute')
+const PostRoute = require('./src/routes/PostRoute')
+const UploadRoute = require('./src/routes/UploadRoute')
+const  ChatRoute = require('./src/routes/ChatRoute')
+const MessageRoute = require('./src/routes/MessageRoute')
+
+app.use('/auth', AuthRoute);
+app.use('/user', UserRoute)
+app.use('/posts', PostRoute)
+app.use('/upload', UploadRoute)
+app.use('/chat', ChatRoute)
+app.use('/message', MessageRoute)
 
 app.listen(PORT,()=>{
     console.log(`app is running at ${PORT}`)

@@ -10,11 +10,11 @@ const UserSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    firstName: {
+    firstname: {
       type: String,
       required: true,
     },
-    lastName: {
+    lastname: {
       type: String,
       required: true,
     },
@@ -22,11 +22,6 @@ const UserSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    verified:{
-       type:Boolean,
-       default:false
-    },
-
    profilePicture: String,
     coverPicture: String,
     about: String,
@@ -40,4 +35,5 @@ const UserSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Users", UserSchema);
+const UserModel = mongoose.model("Users", UserSchema);
+module.exports = UserModel;

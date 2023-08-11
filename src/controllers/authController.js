@@ -1,11 +1,12 @@
-const UserModel = require("../models/userModels");
+const UserModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { sendResponse } = require("../helpers/requestHandlerHelper");
+
 const { sendEmail } = require("../services/emailSender");
 
-// Register new user
-exports.register = async (req, res) => {
+
+exports.registerUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
   try {
     const userExist = await UserModel.findOne({
@@ -16,8 +17,8 @@ exports.register = async (req, res) => {
     }
     if (!userExist) {
       const user = new UserModel({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
         email: req.body.email,
         password: hashedPassword,
         verified: false,
@@ -53,7 +54,7 @@ exports.register = async (req, res) => {
 };
 
 // Login User
-exports.login = async (req, res) => {
+exports.loginUser = async (req, res) => {
   const user = await UserModel.findOne({
     email: req.body.email,
   })
@@ -76,7 +77,8 @@ exports.login = async (req, res) => {
         );
         let user;
           user = {
-            name: userExist.firstName +" " + userExist.lastName,
+            id: userExist._id,
+            name: userExist.firstname + " " + userExist.lastname,
             token: accessToken,
             verified: userExist.verified
           };
@@ -214,3 +216,60 @@ exports.resetPasswordRequest = async (req, res, next) => {
     console.log("e", e);
   }
 };
+// // Register new user
+// exports.registerUser = async (req, res) => {
+
+//   const salt = await bcrypt.genSalt(10);
+//   const hashedPass = await bcrypt.hash(req.body.password, salt);
+//   req.body.password = hashedPass
+//   const newUser = new UserModel(req.body);
+//   const {email} = req.body
+//   try {
+//     // addition new
+//     const oldUser = await UserModel.findOne({ email });
+
+//     if (oldUser)
+//       return res.status(400).json({ message: "User already exists" });
+
+//     // changed
+//     const user = await newUser.save();
+//     const token = jwt.sign(
+//       { email: user.email, id: user._id },
+//       process.env.JWTKEY,
+//       { expiresIn: "1h" }
+//     );
+//     res.status(200).json({ user, token });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+// // Login User
+
+// // Changed
+// exports.loginUser = async (req, res) => {
+//   const { username, password } = req.body;
+
+//   try {
+//     const user = await UserModel.findOne({ username: username });
+
+//     if (user) {
+//       const validity = await bcrypt.compare(password, user.password);
+
+//       if (!validity) {
+//         res.status(400).json("wrong password");
+//       } else {
+//         const token = jwt.sign(
+//           { username: user.username, id: user._id },
+//           process.env.JWTKEY,
+//           { expiresIn: "1h" }
+//         );
+//         res.status(200).json({ user, token });
+//       }
+//     } else {
+//       res.status(404).json("User not found");
+//     }
+//   } catch (err) {
+//     res.status(500).json(err);
+//   }
+// };

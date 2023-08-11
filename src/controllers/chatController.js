@@ -1,4 +1,5 @@
-const ChatModel = require("../models/chatsModel.js");
+const ChatModel = require("../models/chatModel");
+const { sendResponse } = require("../helpers/requestHandlerHelper");
 
 exports.createChat = async (req, res) => {
   const newChat = new ChatModel({
@@ -6,9 +7,9 @@ exports.createChat = async (req, res) => {
   });
   try {
     const result = await newChat.save();
-    res.status(200).json(result);
+    return sendResponse(res, true, 200, "chat created",result);
   } catch (error) {
-    res.status(500).json(error);
+    return sendResponse(res, false, 500, error);
   }
 };
 
@@ -17,9 +18,9 @@ exports.userChats = async (req, res) => {
     const chat = await ChatModel.find({
       members: { $in: [req.params.userId] },
     });
-    res.status(200).json(chat);
+    return sendResponse(res, true, 200, "chats",chat);
   } catch (error) {
-    res.status(500).json(error);
+    return sendResponse(res, false, 500, error);
   }
 };
 
@@ -28,8 +29,8 @@ exports.findChat = async (req, res) => {
     const chat = await ChatModel.findOne({
       members: { $all: [req.params.firstId, req.params.secondId] },
     });
-    res.status(200).json(chat)
+    return sendResponse(res, true, 200, "chat found",chat);
   } catch (error) {
-    res.status(500).json(error)
+    return sendResponse(res, false, 500, error);
   }
 };
