@@ -1,25 +1,10 @@
-const express = require('express');
-const router = express.Router()
-const multer = require('multer')
+const express = require("express");
+const router = express.Router();
+const { upload } = require("../utils/imageUpload");
+const uploadController = require("../controllers/UploadController")
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "public/images");
-    },
-    filename: (req, file, cb) => {
-      cb(null, req.body.name);
-    },
-  });
-const upload = multer({ storage: storage });
+router.post("/image", uploadController.singleUploader);
 
+router.post("/images", upload.array("images", 6), uploadController.multiUploader);
 
-router.post("/", upload.single("file"), (req, res) => {
-    try {
-      return res.status(200).json("File uploded successfully");
-    } catch (error) {
-      console.error(error);
-    }
-  });
-
-  module.exports = router;
-
+module.exports = router;

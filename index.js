@@ -33,15 +33,13 @@ mongoose.connect(process.env.DB_URL, {
   );
 
  const AuthRoute  = require("./src/routes/AuthRoute");
-const UserRoute = require('./src/routes/UserRoute')
-const PostRoute = require('./src/routes/PostRoute')
+const UserRoute = require('./src/routes/UserRoute');
 const UploadRoute = require('./src/routes/UploadRoute')
 const  ChatRoute = require('./src/routes/ChatRoute')
 const MessageRoute = require('./src/routes/MessageRoute')
 
 app.use('/auth', AuthRoute);
 app.use('/user', UserRoute)
-app.use('/posts', PostRoute)
 app.use('/upload', UploadRoute)
 app.use('/chat', ChatRoute)
 app.use('/message', MessageRoute)
