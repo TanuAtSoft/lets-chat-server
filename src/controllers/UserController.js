@@ -21,6 +21,7 @@ exports.getUser = async (req, res) => {
 
 // Get all users
 exports.getAllUsers = async (req, res) => {
+  if(req.user){
   try {
     let users = await UserModel.find({ _id: { $ne: req.user._id } });
     users = users.map((user)=>{
@@ -31,6 +32,9 @@ exports.getAllUsers = async (req, res) => {
   } catch (error) {
     return sendResponse(res, false, 500, "something went wrong", error);
   }
+}else{
+  return sendResponse(res, true, 400, "Invalid Token");
+}
 };
 
 // udpate a user

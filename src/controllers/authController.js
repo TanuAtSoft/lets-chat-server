@@ -2,9 +2,7 @@ const UserModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { sendResponse } = require("../helpers/requestHandlerHelper");
-
 const { sendEmail } = require("../services/emailSender");
-
 
 exports.registerUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -74,6 +72,9 @@ exports.loginUser = async (req, res) => {
           },
           process.env.ACCESS_TOKEN_SECRET,
           { expiresIn: "1h" }
+
+
+          
         );
         let user;
           user = {
@@ -109,6 +110,7 @@ exports.loginUser = async (req, res) => {
 
 //reset password 
 exports.resetPassword = async (req, res, next) => {
+  if(req.user){
   try {
     const userExist = await UserModel.findOne({ _id: req.user._id });
     if (userExist === null) {
@@ -133,6 +135,10 @@ exports.resetPassword = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+}
+else{
+  return sendResponse(res, true, 400, "Invalid Token");
+}
 };
 
 //forgot password
@@ -179,6 +185,7 @@ exports.forgotPassword = async (req, res, next) => {
 };
 
 exports.verifyUser = async (req, res, next) => {
+  if(req.user){
   try {
     const user = await UserModel.findOne({
       _id: req.user._id,
@@ -192,9 +199,13 @@ exports.verifyUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+}else{
+  return sendResponse(res, true, 400, "Invalid Token");
+}
 };
 
 exports.resetPasswordRequest = async (req, res, next) => {
+  if(req.user){
   try {
     const userExist = await UserModel.findOne({ _id: req.user._id });
     if (userExist === null) {
@@ -215,6 +226,9 @@ exports.resetPasswordRequest = async (req, res, next) => {
   } catch (e) {
     console.log("e", e);
   }
+}else{
+  return sendResponse(res, true, 400, "Invalid Token");
+}
 };
 // // Register new user
 // exports.registerUser = async (req, res) => {
